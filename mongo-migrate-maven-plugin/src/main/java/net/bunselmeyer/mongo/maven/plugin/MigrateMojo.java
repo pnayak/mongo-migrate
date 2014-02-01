@@ -220,10 +220,11 @@ public class MigrateMojo extends AbstractMojo {
                 versionDetails.setVersion(details.version);
 
                 if (migrationVersionCollection.getCount(versionDetails) == 0) {
-                    m.up(db);
+                    String resultString = m.up(db);
                     db.getLastError().throwOnError();
                     getLog().info("    " + details.migration.getName() + ", v" + details.version + " migration complete");
                     versionDetails.setRun(DateTime.now(DateTimeZone.UTC));
+                    versionDetails.setMigrationMessage(resultString);
                     migrationVersionCollection.insert(versionDetails);
                 } else {
                     getLog().info("    " + details.migration.getName() + ", v" + details.version + " was already run");

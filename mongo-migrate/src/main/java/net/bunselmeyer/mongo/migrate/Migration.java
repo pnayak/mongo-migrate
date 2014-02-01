@@ -24,18 +24,35 @@ import com.mongodb.DBObject;
 
 public abstract class Migration {
 
-    abstract public void up(DB db);
+    abstract public String up(DB db);
 
-    abstract public void down(DB db);
+    abstract public String down(DB db);
 
-    protected void renameField(DB db, String collectionName, String from, String to) {
+    protected String renameField(DB db, String collectionName, String from, String to) {
         DBCollection collection = db.getCollection(collectionName);
         DBObject query = new BasicDBObject(from, new BasicDBObject("$exists", true));
         DBCursor dbObjects = collection.find(query);
+        int count = dbObjects.count();
         for (DBObject dbObject : dbObjects) {
             dbObject.put(to, dbObject.get(from));
             dbObject.removeField(from);
             collection.save(dbObject);
         }
+        return "renamed field " + from + " in " + count + " documents";
+    }
+
+    protected String updateField(DB db, String collectionName, String field, String from, String to) {
+        DBCollection collection = db.getCollection(collectionName);
+        BasicDBObject query = new BasicDBObject(field, from);
+        DBCursor dbObjects = collection.find(query);
+        int count = dbObjects.count();
+        System.out.println("Updating " + count + " documents");
+        for (DBObject dbObject : dbObjects) {
+            dbObject.put(field, to);
+            collection.save(dbObject);
+            //System.out.println("Updated document : " + dbObject.toString());
+        }
+
+        return "updated field  " + from + " with " + to + " in " + count + " documents";
     }
 }

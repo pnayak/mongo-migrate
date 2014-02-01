@@ -207,12 +207,12 @@ public class MigrateMojoTest {
 
     private static class BaseTestMigration extends Migration {
 
-        public void up(DB db) {
-
+        public String up(DB db) {
+            return null;
         }
 
-        public void down(DB db) {
-
+        public String down(DB db) {
+            return null;
         }
     }
 }

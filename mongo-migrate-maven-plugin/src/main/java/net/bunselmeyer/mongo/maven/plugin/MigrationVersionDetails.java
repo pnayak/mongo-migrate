@@ -29,6 +29,8 @@ public class MigrationVersionDetails {
     private DateTime _run;
     private String _migrationName;
 
+    private String migrationMessage;
+
     public ObjectId getId() {
         return _id;
     }
@@ -59,5 +61,13 @@ public class MigrationVersionDetails {
 
     public void setMigrationName(String migrationName) {
         _migrationName = migrationName;
+    }
+
+    public String getMigrationMessage() {
+        return migrationMessage;
+    }
+
+    public void setMigrationMessage(String migrationMessage) {
+        this.migrationMessage = migrationMessage;
     }
 }

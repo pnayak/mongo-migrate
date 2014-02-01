@@ -34,7 +34,7 @@ public class MigrationTest {
 
     @BeforeClass
     public static void setUpClass() throws UnknownHostException {
-        _mongo = new Mongo("localhost", 17017);
+        _mongo = new Mongo("localhost", 27017);
         _db = _mongo.getDB("unittest_db");
     }
 
@@ -61,14 +61,30 @@ public class MigrationTest {
         assertEquals(3, fooCollection.find(new BasicDBObject("bb", new BasicDBObject("$exists", true))).length());
     }
 
+    @Test
+    public void testUpdateField() throws Exception {
+
+        DBCollection fooBarCollection = _db.getCollection("fooBar");
+        fooBarCollection.insert(new BasicDBObject("_class", "11"));
+        fooBarCollection.insert(new BasicDBObject("_class", "22"));
+        fooBarCollection.insert(new BasicDBObject("_class", "33"));
+
+        assertEquals(3, fooBarCollection.find(new BasicDBObject("_class", new BasicDBObject("$exists", true))).length());
+
+        TestMigration migration = new TestMigration();
+        migration.updateField(_db, "fooBar", "_class", "11", "com.intellify.api.security.User");
+
+        assertEquals(1, fooBarCollection.find(new BasicDBObject("_class", "com.intellify.api.security.User")).length());
+    }
+
     private static class TestMigration extends Migration {
 
-        public void up(DB db) {
-
+        public String up(DB db) {
+            return null;
         }
 
-        public void down(DB db) {
-
+        public String down(DB db) {
+            return null;
         }
     }
 }
