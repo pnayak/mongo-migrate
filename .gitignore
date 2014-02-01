@@ -3,6 +3,3 @@ target/*
 *.iml
 *.eml
 .idea
-.idea/*
-.idea/workspace.xml
-.idea/tasks.xml

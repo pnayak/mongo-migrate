@@ -26,6 +26,8 @@ import java.lang.annotation.Target;
 public @interface Connection {
     String host() default "";
 
+    String port() default "27017";
+
     String db();
 
     String version();

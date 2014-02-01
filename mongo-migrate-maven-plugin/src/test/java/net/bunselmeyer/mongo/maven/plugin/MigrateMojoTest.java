@@ -119,13 +119,13 @@ public class MigrateMojoTest {
 
         ImmutableList<MigrateMojo.MigrationDetails> good = statusIndex.get(MigrateMojo.MIGRATION_CHECK.GOOD);
         assertEquals(1, good.size());
-        assertEquals("status=GOOD,message=<null>,migration=GoodMigration,version=2012-09-20T20:44:00.000-08:00,host=mongo1,db=db1,<null>",
+        assertEquals("status=GOOD,message=<null>,migration=GoodMigration,version=2012-09-20T20:44:00.000-08:00,host=mongo1,port=27017,db=db1,<null>",
             good.iterator().next().toString());
 
         ImmutableList<MigrateMojo.MigrationDetails> warnings = statusIndex.get(MigrateMojo.MIGRATION_CHECK.WARNING);
         assertEquals(1, warnings.size());
         assertEquals(
-            "status=WARNING,message=Migration does not have @Connection,migration=ConnectionLessMigration,version=<null>,host=<null>,db=<null>,<null>",
+            "status=WARNING,message=Migration does not have @Connection,migration=ConnectionLessMigration,version=<null>,host=<null>,port=<null>,db=<null>,<null>",
             warnings.iterator().next().toString());
 
         ImmutableList<MigrateMojo.MigrationDetails> errors = statusIndex.get(MigrateMojo.MIGRATION_CHECK.ERROR);
@@ -134,17 +134,17 @@ public class MigrateMojoTest {
         for (MigrateMojo.MigrationDetails error : errors) {
             if (error.migration == BadVersionMigration.class) {
                 assertEquals(
-                    "status=ERROR,message=Failed to parse @version to timestamp in @Connection,migration=BadVersionMigration,version=<null>,host=<null>,db=<null>,<null>",
+                    "status=ERROR,message=Failed to parse @version to timestamp in @Connection,migration=BadVersionMigration,version=<null>,host=<null>,port=<null>,db=<null>,<null>",
                     error.toString());
             }
             if (error.migration == EmptyVersionMigration.class) {
                 assertEquals(
-                    "status=ERROR,message=Empty version property in @Connection,migration=EmptyVersionMigration,version=<null>,host=<null>,db=<null>,<null>",
+                    "status=ERROR,message=Empty version property in @Connection,migration=EmptyVersionMigration,version=<null>,host=<null>,port=<null>,db=<null>,<null>",
                     error.toString());
             }
             if (error.migration == EmptyDbMigration.class) {
                 assertEquals(
-                    "status=ERROR,message=Empty db property in @Connection,migration=EmptyDbMigration,version=<null>,host=<null>,db=<null>,<null>",
+                    "status=ERROR,message=Empty db property in @Connection,migration=EmptyDbMigration,version=<null>,host=<null>,port=<null>,db=<null>,<null>",
                     error.toString());
             }
         }
@@ -153,7 +153,7 @@ public class MigrateMojoTest {
     private MigrateMojo.MigrationDetails create(Class<? extends Migration> type) {
         Connection connection = type.getAnnotation(Connection.class);
         DateTime version = DateTime.parse(connection.version());
-        return new MigrateMojo.MigrationDetails(type, version, connection.host(), connection.db());
+        return new MigrateMojo.MigrationDetails(type, version, connection.host(), connection.port(), connection.db());
     }
 
     @Connection(host = "mongo1", db = "db1", version = "2012-09-20T06:44:00-0800")

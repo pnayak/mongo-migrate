@@ -157,8 +157,9 @@ public class MigrateMojo extends AbstractMojo {
                 try {
                     DateTime version = DateTime.parse(connection.version());
                     String host = StringUtils.isNotBlank(connection.host()) ? connection.host() : MigrateMojo.this.host;
+                    String port = StringUtils.isNotBlank(connection.port()) ? connection.port() : MigrateMojo.this.port;
                     return version != null ? //
-                            new MigrationDetails(input, version, host, connection.db()) : //
+                            new MigrationDetails(input, version, host, port, connection.db()) : //
                             new MigrationDetails(MIGRATION_CHECK.ERROR, "Failed to parse @version to timestamp in @Connection", input);
                 } catch (Exception e) {
                     return new MigrationDetails(MIGRATION_CHECK.ERROR, "Failed to parse @version to timestamp in @Connection", input);
@@ -292,6 +293,7 @@ public class MigrateMojo extends AbstractMojo {
         public Class<? extends Migration> migration;
         public DateTime version;
         public String host;
+        public String port;
         public String db;
 
         private MigrationDetails(MIGRATION_CHECK status, String message, Class<? extends Migration> migration) {
@@ -300,11 +302,12 @@ public class MigrateMojo extends AbstractMojo {
             this.migration = migration;
         }
 
-        protected MigrationDetails(Class<? extends Migration> migration, DateTime version, String host, String db) {
+        protected MigrationDetails(Class<? extends Migration> migration, DateTime version, String host, String port, String db) {
             this.status = MIGRATION_CHECK.GOOD;
             this.migration = migration;
             this.version = version;
             this.host = host;
+            this.port = port;
             this.db = db;
         }
 
@@ -316,6 +319,7 @@ public class MigrateMojo extends AbstractMojo {
                     append("migration", migration != null ? migration.getSimpleName() : null).
                     append("version", version).
                     append("host", host).
+                    append("port", port).
                     append("db", db).
                     toString();
         }
